@@ -1,44 +1,64 @@
-# script that lists pokemons
 import requests
 import json
 
-
-def request_pokemon_data(pokemon_id=None):   
-    url = 'https://pokeapi.co/api/v2/pokemon/' + str(pokemon_id)
+def request_data(url):
     res = requests.get(url)
-    return res
+    res = res.text
+    data = json.loads(res)
+    return data
 
-def all_pokemon_names():
-    count = 0
-    for i in range(1,1000):
-        req = request_pokemon_data(i)
-        print(req)
-        if req.status_code == 200:
-            count += 1
-    print(count)
-        # if req
-        # req = req.text
-        # data = json.loads(req)
-        # print(data['name'])
-def pokemon_list(): 
-    url = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=898'
-    res = requests.get(url)
-    return res
-
-request = pokemon_list()
-request = request.text
-data = json.loads(request)
-id_count = 0
-for item in data['results']:
-    id_count += 1
-    print(f"ID: {id_count}\tName: {item['name'].title()}")      
-# all_pokemon_names()
-# request = request_pokemon_data(3)
-# request = request.text
-# data = json.loads(request)
-# # for key in data:
-# #     print(key)
-
-# print(data['name'], data['types'])
-        
+class Pokemon():
+    def __init__(self, abilities, base_experience, forms, game_indices, height, held_items, id_num, is_default, location_area_encounters, moves, name, order, species, sprites, stats, types, weight):
+        self.abilities = abilities
+        self.base_experience = base_experience
+        self.forms = forms
+        self.game_indices = game_indices
+        self.height =  height
+        self.held_items = held_items
+        self.id_num = id_num
+        self.is_default = is_default
+        self.location_area_encounters = location_area_encounters
+        self.moves = moves
+        self.name = name
+        self.order = order
+        self.species = species
+        self.sprites = sprites
+        self.stats = stats
+        self.types = types
+        self.weight = weight
     
+    def ability_list(self):
+        abilities = []
+        ability_description_url = []
+        ability_description = []
+        hidden_ablility = []
+
+        for item in self.abilities:
+            abilities.append(item['ability']['name'])
+            ability_description_url.append(item['ability']['url'])
+            hidden_ablility.append(item['is_hidden'])
+        
+        for i in range(len(abilities)):
+            ability_description = request_data(ability_description_url[i])
+            print(f"\nAbility: {abilities[i]}\nEffect:\n\t{ability_description['effect_entries'][1]['effect']}")
+            print(f"\nShort effect:\n\t{ability_description['effect_entries'][1]['short_effect']}")
+            if hidden_ablility[i]:
+                print(f"Note! This ability is hidden.")
+    
+    def pokemon_info(self):
+        print(f"Name: {self.name.title()}\nID: {self.id_num}\nHeight: {self.height/10} m\nWeight: {self.weight/10} Kg\nBase experience: {self.base_experience}")
+        
+
+
+
+
+
+url = "https://pokeapi.co/api/v2/pokemon/12/"
+pokemon_atributes = []
+data = request_data(url)
+for key in data:
+    pokemon_atributes.append(data[key])
+
+pokemon = Pokemon(*pokemon_atributes)
+pokemon.pokemon_info()
+pokemon.ability_list()
