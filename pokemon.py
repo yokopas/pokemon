@@ -8,10 +8,6 @@ def request_data(url):
     data = json.loads(res)
     return data
 
-
-
-
-
 # state pokemon_id var to be used as a global var in menu
 pokemon_id = '1'
 
@@ -174,9 +170,9 @@ class Pokemon():
             i = 0
             while i != 898: 
                 for i in range(1, 899):
-                    print(f"ID: {i: <4}Name: {pokemon_list[i].title(): <22}", end='')
+                    print(f"ID: {i: <3}Name: {pokemon_list[i].title(): <22}", end='')
                     n += 1
-                    if n % 3 == 0:
+                    if n % 2 == 0:
                         print()
                     if i % 66 == 0:
                         while True:
@@ -218,11 +214,11 @@ class Pokemon():
             
         while True:
             choice = input("""
-Type 'n' = Next pokemon
-Type 'p' = Previous pokemon
-Type 'l' = List all pokemons
-Type 'c' = Choose a pokemon
-Type 'q' = Quit
+'n' = Next pokemon
+'p' = Previous pokemon
+'l' = List all pokemons
+'c' = Choose a pokemon
+'q' = Quit
 
 Please make a choice: 
 """)
@@ -239,18 +235,12 @@ Please make a choice:
             else:
                 print("\nNot a valid input!\nPlease try again.")
                 continue
-    
-   
+
 def main():
     global pokemon_id
     while True:
         pokemon = Pokemon(*Pokemon.pokemon_atributes(pokemon_id))
         pokemon.pokemon_info()
         pokemon.menu()
-        
-        
-        
-        
-            
-        
+
 main()
