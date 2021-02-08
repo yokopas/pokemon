@@ -9,43 +9,13 @@ def request_data(url):
     return data
 
 
-def all_pokemon_list():
-    url = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=898'
-    data = request_data(url)
-    all_pokemon_list = {}
-    id_count = 0
-    for item in data['results']:
-        id_count += 1
-        all_pokemon_list[id_count] = item['name']
-    return all_pokemon_list
 
-def print_all_pokemons():
-    pokemon_list = all_pokemon_list()
-    n = 0
-    i = 0
-    while i != 898: 
-        for i in range(1, 899):
-            print(f"ID: {i: <4}Name: {pokemon_list[i].title(): <22}", end='')
-            n += 1
-            if n % 3 == 0:
-                print()
-            if i % 66 == 0:
-                while True:
-                    value = input('Continue listing?(y or n): ')
-                    try:
-                        value = str(value)
-                    except ValueError:
-                        print('y or n, please: ')
-                        continue
-                    if value == 'y':
-                        break
-                    elif value == 'n':
-                        return
-                    else:
-                        print('y or n, please: ')
-# making pokemon class to collect data from request
+
+
+# state pokemon_id var to be used as a global var in menu
 pokemon_id = '1'
 
+# making pokemon class to collect data from request
 class Pokemon():
     # collect atribute data for class
     def pokemon_atributes(pokemon_id):
@@ -77,6 +47,7 @@ class Pokemon():
         self.types = types
         self.weight = weight
     
+    # extract pokemon abilities
     def pokemon_ability(self):
         abilities = ''
         for item in self.abilities:
@@ -102,6 +73,7 @@ class Pokemon():
             stat_dict[item['stat']['name']] = item['base_stat']
         return stat_dict
     
+    # species data request
     def species_data(self):
         base_url = 'https://pokeapi.co/api/v2/pokemon-species/'
         pokemon_specie = self.species['name']
@@ -125,7 +97,7 @@ class Pokemon():
         sp_defense = str(stats['special-defense'])
         speed = str(stats['speed'])
 
-        # data about species requires another request and I want to call it just once
+        # make only one call to collect all species data
         # uses more memory but runs much faster
         species_data = self.species_data()
 
@@ -169,27 +141,103 @@ class Pokemon():
         print(border, info_string)
         print(border)
 
+    # menu functions
     def menu(self):
 
         def next_pokemon():
             global pokemon_id
-            pokemon_id = str(int(pokemon_id) + 1)
+            if pokemon_id == '898':
+                pokemon_id = '1'
+            else:
+                pokemon_id = str(int(pokemon_id) + 1)
+
+        def prev_pokemon():
+            global pokemon_id
+            if pokemon_id == '1':
+                pokemon_id = '898'
+            else:    
+                pokemon_id = str(int(pokemon_id) - 1)
+        
+        def all_pokemon_list():
+            url = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=898'
+            data = request_data(url)
+            all_pokemon_list = {}
+            id_count = 0
+            for item in data['results']:
+                id_count += 1
+                all_pokemon_list[id_count] = item['name']
+            return all_pokemon_list
+
+        def print_all_pokemons():
+            pokemon_list = all_pokemon_list()
+            n = 0
+            i = 0
+            while i != 898: 
+                for i in range(1, 899):
+                    print(f"ID: {i: <4}Name: {pokemon_list[i].title(): <22}", end='')
+                    n += 1
+                    if n % 3 == 0:
+                        print()
+                    if i % 66 == 0:
+                        while True:
+                            value = input('Continue listing?(y or n): ')
+                            try:
+                                value = str(value)
+                            except ValueError:
+                                print('y or n, please: ')
+                                continue
+                            if value == 'y':
+                                break
+                            elif value == 'n':
+                                return
+                            else:
+                                print('y or n, please: ')
+
+        def choose_pokemon():
+            global pokemon_id
+            escape = pokemon_id
+            while True:
+                pokemon_id = input(f"\nEnter pokemon name or Id: ").lower()
+                try:
+                    if pokemon_id == 'b':
+                        pokemon_id = escape
+                        break
+                    
+                    if pokemon_id in all_pokemon_list().values():
+                        break
+                    
+                    if int(pokemon_id) in all_pokemon_list():
+                        break
+                        
+                    else:
+                        print("Not a valid name or Id!\nPlease try again.\nType 'b' to go back")
+                        continue
+                except:
+                    print("Not a valid name or Id!\nPlease try again.\nType 'b' to go back")
+                    continue
+            
         while True:
             choice = input("""
 Type 'n' = Next pokemon
-Type 'q' = Quit
+Type 'p' = Previous pokemon
 Type 'l' = List all pokemons
+Type 'c' = Choose a pokemon
+Type 'q' = Quit
 
-please make a selection:
+Please make a choice: 
 """)
             if choice == 'q':
                 return quit()
             elif choice == 'l':
-                return print_all_pokemons()
+                return print_all_pokemons(), choose_pokemon()
             elif choice == 'n':
                 return next_pokemon()
+            elif choice == 'p':
+                return prev_pokemon()
+            if choice == 'c':
+                return choose_pokemon()
             else:
-                print("wrong input")
+                print("\nNot a valid input!\nPlease try again.")
                 continue
     
    
@@ -199,19 +247,9 @@ def main():
         pokemon = Pokemon(*Pokemon.pokemon_atributes(pokemon_id))
         pokemon.pokemon_info()
         pokemon.menu()
-        continue
         
-        if nex_t == True:
-            pokemon_id +=1
-            pokemon = Pokemon(*Pokemon.pokemon_atributes(pokemon_id))
-            pokemon.pokemon_info()
-            continue
-
-        while True:
-            pokemon_id = input("Enter pokemon id: ")
-            pokemon = Pokemon(*Pokemon.pokemon_atributes(pokemon_id))
-            pokemon.pokemon_info()
-            break
+        
+        
         
             
         
