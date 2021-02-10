@@ -12,7 +12,7 @@ def request_data(url):
 pokemon_id = '1'
 
 # making pokemon class to collect data from request
-class Pokemon():
+class Pokemon:
     # collect atribute data for class
     def pokemon_atributes(pokemon_id):
         url = "https://pokeapi.co/api/v2/pokemon/" + str(pokemon_id)
@@ -198,13 +198,10 @@ class Pokemon():
                     if pokemon_id == 'b':
                         pokemon_id = escape
                         break
-                    
                     if pokemon_id in all_pokemon_list().values():
                         break
-                    
                     if int(pokemon_id) in all_pokemon_list():
                         break
-                        
                     else:
                         print("Not a valid name or Id!\nPlease try again.\nType 'b' to go back")
                         continue
@@ -242,5 +239,5 @@ def main():
         pokemon = Pokemon(*Pokemon.pokemon_atributes(pokemon_id))
         pokemon.pokemon_info()
         pokemon.menu()
-
-main()
+if __name__=='__main__':
+    main()
