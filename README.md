@@ -1,2 +1,2 @@
 # pokemon
-List pokemons from pokemon IPA
+List pokemons from pokemon API
