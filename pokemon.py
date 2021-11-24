@@ -19,7 +19,8 @@ class Pokemon:
         pokemon_atributes = []
         data = request_data(url)
         for key in data:
-            pokemon_atributes.append(data[key])
+            if key != 'past_types':
+                pokemon_atributes.append(data[key])
         return pokemon_atributes
 
     def __init__(self, abilities, base_experience, forms, game_indices, 
@@ -241,3 +242,4 @@ def main():
         pokemon.menu()
 if __name__=='__main__':
     main()
+
